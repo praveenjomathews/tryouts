@@ -1,0 +1,136 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd ">
+<modelVersion>4.0.0</modelVersion>
+<groupId>com.tmobile.${team_name}</groupId>
+<artifactId></artifactId>
+<version></version>
+<name></name>
+<packaging>rpm</packaging>
+<url>http://maven.apache.org</url>
+<parent>
+<groupId>com.tmobile.idw</groupId>
+<artifactId>jobs</artifactId>
+<version>0</version>
+<relativePath>../../jobs-dependencies.xml</relativePath>
+</parent>
+<properties>
+<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+</properties>
+
+<build>
+<plugins>
+
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-dependency-plugin</artifactId>
+<version>2.10</version>
+<executions>
+<execution>
+<id>copy-dependencies</id>
+<phase>compile</phase>
+<goals>
+<goal>copy-dependencies</goal>
+</goals>
+<configuration>
+<outputDirectory>lib</outputDirectory>
+<overWriteReleases>false</overWriteReleases>
+<overWriteSnapshots>false</overWriteSnapshots>
+<overWriteIfNewer>false</overWriteIfNewer>
+</configuration>
+</execution>
+</executions>
+</plugin>
+<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-jar-plugin</artifactId>
+		<version>2.4</version>
+			<executions>
+				<execution>
+				<id>default-jar</id>
+				<phase />
+				</execution>
+			</executions>
+		</plugin>
+  <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>rpm-maven-plugin</artifactId>
+          <version>2.1.4</version>
+          <extensions>true</extensions>
+           <configuration>
+			<copyright>2015, EIT</copyright>
+			<group>IDWBI</group>
+			<description>Maven Recipe: RPM Package.</description>
+			<mappings>
+			<mapping>
+			<directory>${serverPath}/${project.name}</directory>
+                        <directoryIncluded>true</directoryIncluded>
+                        <recurseDirectories>true</recurseDirectories>
+                        <filemode>775</filemode>
+                        <username>hdpsrvc</username>
+                        <groupname>gp_hdpdev</groupname>
+			<sources>
+			<source>
+			<location>../${project.name}</location>
+                        <excludes>
+ 			   <exclude>**/pom.xml</exclude>
+ 			   <exclude>**/target</exclude>
+ 			</excludes>
+ 		
+			</source>
+			</sources>
+			</mapping>
+			</mappings>
+			<postinstallScriptlet>				
+					<script>rm -rf ${serverPath}/${project.name}/target
+					</script>			
+			</postinstallScriptlet>
+			</configuration>
+        </plugin>
+          
+
+
+ <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+          <configuration>
+      <pomFileName>${pomfile}</pomFileName>
+      <updateVersionsToSnapshot>false</updateVersionsToSnapshot>
+   </configuration>
+      </plugin>
+	<plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-deploy-plugin</artifactId>
+	<version>2.8.2</version>
+	<configuration>
+	<skip>true</skip>
+	</configuration>
+	</plugin>
+	
+  <plugin>
+	<groupId>org.sonatype.plugins</groupId>
+	<artifactId>nexus-staging-maven-plugin</artifactId>
+	<version>1.6.6</version>
+	<extensions>true</extensions>
+	 <executions>
+	<execution>
+         <id>default-deploy</id>
+         <phase>deploy</phase>
+          <goals>
+            <goal>deploy</goal>
+         </goals>
+      </execution>
+       </executions>
+		<configuration>
+	<serverId>${nt.id}</serverId>
+	<nexusUrl>https://devcicd002.unix.gsm1900.org:8081/nexus/</nexusUrl>
+	<skipStaging>false</skipStaging>
+	<stagingDescription>${artifactId}:${version}</stagingDescription>
+	</configuration>
+</plugin>
+</plugins>
+</build>
+
+<dependencies>
+<!--  Job specific Dependencies go here  -->
+</dependencies>
+</project>
